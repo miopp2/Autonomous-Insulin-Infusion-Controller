@@ -27,7 +27,7 @@ def main():
     vec_env_kwargs = {'start_method': 'spawn'}
     env_kwargs = {'reward_fun': reward_func}
     n_envs = 32
-    env = make_vec_env(env_class, n_envs=n_envs, monitor_dir='./training_ws', vec_env_cls=SubprocVecEnv,
+    env = make_vec_env(env_class, n_envs=n_envs, monitor_dir='./training_ws_rlr', vec_env_cls=SubprocVecEnv,
                        vec_env_kwargs=vec_env_kwargs, env_kwargs=env_kwargs)
     # env = VecNormalize(env, clip_obs=350, clip_reward=10000, gamma=0.9999)
 
@@ -38,7 +38,7 @@ def main():
     #    outside_value=0.15).value
 
     model = PPO2(MlpLnLstmPolicy, env, verbose=1, tensorboard_log="./simglucose_ppo_tensorboard/",
-                 n_steps=128, learning_rate=3e-5, ent_coef=0.0001, gamma=0.999, nminibatches=n_envs,
+                 n_steps=128, learning_rate=3e-4, ent_coef=0.0001, gamma=0.999, nminibatches=n_envs,
                  policy_kwargs=policy_kwargs, vf_coef=0.8, lam=0.91, cliprange=0.1,
                  cliprange_vf=0.1)
 
