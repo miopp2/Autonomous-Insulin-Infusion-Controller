@@ -6,6 +6,11 @@ from stable_baselines.common.policies import MlpLnLstmPolicy, MlpLstmPolicy
 from stable_baselines.common.schedules import LinearSchedule, PiecewiseSchedule
 from stable_baselines.common.vec_env import SubprocVecEnv, VecNormalize
 
+from warnings import simplefilter
+
+simplefilter(action='ignore', category=FutureWarning)
+simplefilter(action='ignore', category=UserWarning)
+
 from train.env.simglucose_gym_env import T1DSimEnv, T1DDiscreteSimEnv, T1DAdultSimEnv, T1DAdultSimV2Env, T1DDiscreteEnv, \
     T1DInsObsSimEnv
 from train.reward.custom_rewards import shaped_reward_around_normal_bg, shaped_negative_reward_around_normal_bg, \
@@ -19,7 +24,7 @@ def main():
                                              name_prefix="rl_model")
     env_class = T1DInsObsSimEnv
     reward_func = orig_risk_diff
-    vec_env_kwargs = {'start_method': 'fork'}
+    vec_env_kwargs = {'start_method': 'spawn'}
     env_kwargs = {'reward_fun': reward_func}
     n_envs = 32
     env = make_vec_env(env_class, n_envs=n_envs, monitor_dir='./training_ws', vec_env_cls=SubprocVecEnv,

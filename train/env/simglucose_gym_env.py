@@ -84,6 +84,7 @@ class T1DSimEnv(gym.Env):
         self.env.render(close=close)
 
     @property
+    # todo: change action space
     def action_space(self):
         ub = self.env.pump._params['max_basal']
         return spaces.Box(low=0, high=ub, shape=(1,))
@@ -356,6 +357,7 @@ class T1DAdultSimEnv(gym.Env):
         # have to hard code the patient_name, gym has some interesting
         # error when choosing the patient
         if patient_name is None:
+            # todo: maybe change what patients we run
             # patient_name = 'adolescent#001'
             adult_patients = [p for p in patient_names if "adult" in p]
             patient_name = random.choice(adult_patients)

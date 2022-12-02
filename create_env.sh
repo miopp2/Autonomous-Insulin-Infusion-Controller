@@ -11,4 +11,4 @@ conda create --name simgluc python=3.8
 conda activate simgluc
 
 # Install the MIALab dependencies
-pip install -r ../requirements.txt
+pip install -r requirements.txt
