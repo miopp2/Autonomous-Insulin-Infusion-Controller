@@ -7,7 +7,7 @@
 #SBATCH --partition=epyc2
 #SBATCH --qos=job_epyc2
 #SBATCH --mail-user=mirjam.oppliger@students.unibe.ch
-#SBATCH --mail-type=fail, end
+#SBATCH --mail-type=fail,end
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 

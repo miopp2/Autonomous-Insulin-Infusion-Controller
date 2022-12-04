@@ -1,3 +1,5 @@
+import os
+os.chdir('/storage/homefs/mo15c093/diabetes/Autonomous-Insulin-Infusion-Controller/train')
 from simglucose.simulation.env import risk_diff as orig_risk_diff
 from stable_baselines import PPO2
 from stable_baselines.common import make_vec_env
@@ -8,9 +10,6 @@ from stable_baselines.common.vec_env import SubprocVecEnv, VecNormalize
 
 from warnings import simplefilter
 
-simplefilter(action='ignore', category=FutureWarning)
-simplefilter(action='ignore', category=UserWarning)
-
 from train.env.simglucose_gym_env import T1DSimEnv, T1DDiscreteSimEnv, T1DAdultSimEnv, T1DAdultSimV2Env, T1DDiscreteEnv, \
     T1DInsObsSimEnv
 from train.reward.custom_rewards import shaped_reward_around_normal_bg, shaped_negative_reward_around_normal_bg, \
@@ -19,7 +18,10 @@ from train.save_on_best_result_callback_v2 import SaveOnBestTrainingRewardCallba
 
 
 def main():
-    save_folder = 'training_ws/'
+    simplefilter(action='ignore', category=FutureWarning)
+    simplefilter(action='ignore', category=UserWarning)
+
+    save_folder = 'training_ws_disc/'
     checkpoint_callback = CheckpointCallback(save_freq=128, save_path=save_folder,
                                              name_prefix="rl_model")
     env_class = T1DInsObsSimEnv
@@ -27,7 +29,7 @@ def main():
     vec_env_kwargs = {'start_method': 'spawn'}
     env_kwargs = {'reward_fun': reward_func}
     n_envs = 32
-    env = make_vec_env(env_class, n_envs=n_envs, monitor_dir='./training_ws_rlr', vec_env_cls=SubprocVecEnv,
+    env = make_vec_env(env_class, n_envs=n_envs, monitor_dir='./training_ws_disc', vec_env_cls=SubprocVecEnv,
                        vec_env_kwargs=vec_env_kwargs, env_kwargs=env_kwargs)
     # env = VecNormalize(env, clip_obs=350, clip_reward=10000, gamma=0.9999)
 
@@ -38,11 +40,11 @@ def main():
     #    outside_value=0.15).value
 
     model = PPO2(MlpLnLstmPolicy, env, verbose=1, tensorboard_log="./simglucose_ppo_tensorboard/",
-                 n_steps=128, learning_rate=3e-4, ent_coef=0.0001, gamma=0.999, nminibatches=n_envs,
+                 n_steps=128, learning_rate=3e-5, ent_coef=0.0001, gamma=0.999, nminibatches=n_envs,
                  policy_kwargs=policy_kwargs, vf_coef=0.8, lam=0.91, cliprange=0.1,
                  cliprange_vf=0.1)
 
-    model.learn(total_timesteps=50000000, callback=[checkpoint_callback])
+    model.learn(total_timesteps=1200000, callback=[checkpoint_callback])
 
 
 if __name__ == "__main__":
